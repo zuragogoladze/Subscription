@@ -1,0 +1,101 @@
+﻿@model NewsVM
+@{
+    ViewBag.Title = "ბლოგი";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Languages = ViewBag.Languages as List<TBC.Capital.Dal.Models.Language>;
+
+    var imagePosterCropperSettings = new CropperVM()
+    {
+        Id = 0,
+        FieldName = "Image",
+        Width = 340,
+        Height = 400,
+        LabelText = Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "col-form-label col-md-2" }).ToHtmlString(),
+        ValidationsMessage = Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger m--font-danger m-form__help" }).ToHtmlString(),
+        ImageString = Html.EditorFor(model => model.Image).ToHtmlString(),
+        ImageExistingValue = Model?.Image
+    };
+    var coverImagePosterCropperSettings = new CropperVM()
+    {
+        Id = 1,
+        FieldName = "CoverImage",
+        Width = 740,
+        Height = 390,
+        LabelText = Html.LabelFor(model => model.CoverImage, htmlAttributes: new { @class = "col-form-label col-md-2" }).ToHtmlString(),
+        ValidationsMessage = Html.ValidationMessageFor(model => model.CoverImage, "", new { @class = "text-danger m--font-danger m-form__help" }).ToHtmlString(),
+        ImageString = Html.EditorFor(model => model.CoverImage).ToHtmlString(),
+        ImageExistingValue = Model?.CoverImage
+    };
+    var shareImagePosterCropperSettings = new CropperVM()
+    {
+        Id = 2,
+        FieldName = "ShareImage",
+        Width = 1200,
+        Height = 630,
+        LabelText = Html.LabelFor(model => model.ShareImage, htmlAttributes: new { @class = "col-form-label col-md-2" }).ToHtmlString(),
+        ValidationsMessage = Html.ValidationMessageFor(model => model.ShareImage, "", new { @class = "text-danger m--font-danger m-form__help" }).ToHtmlString(),
+        ImageString = Html.EditorFor(model => model.ShareImage).ToHtmlString(),
+        ImageExistingValue = Model?.ShareImage
+    };
+}
+
+@using (Html.LsForm("სიახლე", true))
+{
+    @Html.ValidationSummary(false, "", new { @class = "text-danger validation" })
+    @Html.AntiForgeryToken()
+    if (Model != null)
+    {
+        @Html.HiddenFor(x => x.Id, new { Value = Model.Id })
+    }
+    else
+    {
+        <input type="hidden" name="Id" value="0" />
+    }
+
+    @Html.Partial("_Cropper", imagePosterCropperSettings)
+    @Html.Partial("_Cropper", coverImagePosterCropperSettings)
+    @Html.Partial("_Cropper", shareImagePosterCropperSettings)
+
+    <div class="col-md-12">
+        @Html.LsCheckBox(model => model.IsPublished)
+        @Html.LsInput(model => model.PublishDate, "", new { @class = "date-picker", @autocomplete = "off", @Value = Model == null ? DateTime.Now : Model.PublishDate })
+        @Html.LsInput(model => model.Slug)
+
+        @Html.Partial("_PartialLanguage", Languages)
+        <div class="m-portlet__body">
+            <div class="tab-content">
+                @for (int i = 0; i < Languages.Count; i++)
+                {
+                    var lang = Languages[i];
+
+                    <div class="tab-pane @if (i == 0) { <text>active</text>}" id="lang-@lang.Code" role="tabpanel">
+                        @Html.HiddenFor(model => model.Translations[i].LanguageCode, new { Value = lang.Code })
+                        @Html.LsInput(model => model.Translations[i].Title)
+                        @Html.ValidationMessageFor(model => model.Translations[i].Title, "", new { @class = "text-danger" })
+                        @Html.LsEditor(model => model.Translations[i].Description)
+                        @Html.ValidationMessageFor(model => model.Translations[i].Description, "", new { @class = "text-danger" })
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="form-group row m-form__group">
+            @Html.LabelFor(x => x.TagsId, new { @class = "col-form-label col-md-2" })
+            <div class="col-md-8">
+                @Html.ListBoxFor(m => Model.TagsId, new MultiSelectList(ViewBag.Tags, "Id", "Name", Model?.TagsId), new { @class = "m-select2 form-control", style = "100%" })
+            </div>
+        </div>
+        <div class="m-separator m-separator--dashed"></div>
+    </div>
+
+    // files
+    @Html.Partial("~/Views/Shared/_FilesUpload.cshtml", Model?.AttachedFiles.OrderBy(e=>e.Order))
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            GenerateSlugConverter("Translations_0__Title", "Slug");
+        });
+    </script>
+}

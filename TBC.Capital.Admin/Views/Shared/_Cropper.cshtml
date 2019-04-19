@@ -1,0 +1,54 @@
+﻿@model CropperVM
+@{
+    Layout = null;
+
+    var isBase64Image = Model.ImageExistingValue?.StartsWith("data:") ?? false;
+}
+
+
+<div class="col-md-12 image-cropper-vm" data-id="@Model.Id" data-height="@Model.Height" data-width="@Model.Width">
+    <div class="form-group row m-form__group">
+        <label class="col-form-label col-md-2" for="@Model.FieldName">
+            @Helpers.StrimHTML(Model.LabelText) - @(Model.Width)x@(Model.Height)
+        </label>
+        <div class="col-lg-5">
+            <div class="row">
+                <div class="col-lg-11">
+                    <label class="custom-file" for="@Model.FieldName-file">
+                        <input type="file" class="custom-file-input image-file" id="@Model.FieldName-file">
+                        <span class="custom-file-label">
+                            @Model.ImageExistingValue
+                        </span>
+                    </label>
+                </div>
+                <div class="col-lg-1 cropper-img-remove-box @(!string.IsNullOrEmpty(Model.ImageExistingValue)? "active":"")">
+                    <button type="button" class="btn btn-danger btn-icon cropper-img-remove-btn"><i class="fa fa-remove"></i></button>
+                </div>
+                @Html.Raw(Model.ValidationsMessage)
+            </div>
+        </div>
+        <div class="image-name-input">
+            @Html.Raw(Model.ImageString)
+        </div>
+
+    </div>
+    <div class="upload-demo-wrapper">
+        <div class="upload-demo" style="max-width: 100%">
+            <img src="@Model.ImageExistingValue" class="existing-Image" style="max-width: 100%"/>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function removeImage() {
+        $('#Image-Cropper').attr('src', ' ');
+        if ($('.croppie-container')[0]) {
+            $('#Image-Cropper').croppie("destroy");
+            $('#Image').attr('value', ' ');
+            $('#ImageBase64').attr('value', ' ');
+        }
+        else {
+        }
+    }
+</script>

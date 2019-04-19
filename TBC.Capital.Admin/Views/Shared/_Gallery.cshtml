@@ -1,0 +1,64 @@
+﻿@model List<GalleryVM>
+@{
+    var gallerySize = ViewBag.GallerySize as GallerySizeVM;
+}
+<!-- start::Gallery-->
+<div class="col-md-12">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    გალერეა
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-portlet__body gallery-wrapper">
+        <div style="text-align:center;">
+            <div class="form-group m-form__group gallery-image-container" data-height="@gallerySize.Heigth" data-width="@gallerySize.Width" data-id="0">
+                <label class='col-form-label sup-label btn btn-success' for='GalleyImage-file'>ახალი სურათი</label>
+                <div class="col-lg-10 hidden">
+                    <label class="custom-file" for="GalleyImage-file">
+                        <input type="file" class="custom-file-input gallery-image-file" id="GalleyImage-file">
+                    </label>
+                </div>
+                <div class="upload-demo">
+                </div>
+                <div class="btn btn-success upload-gallery" style="color: white;">სურათის დამატება</div>
+            </div>
+        </div>
+
+        <div class="gallery">
+            <ol data-maxlevel="1" class="sortable images-div row">
+                @if (Model != null)
+                {
+                    foreach (var item in Model.OrderBy(x => x.Order))
+                    {
+                        <li id="list_@item.Id" class="col-lg-3 gallery-image-item">
+                            <div class="img-item">
+                                <div class="image-wrapper">
+                                    <img src="@item.Name" />
+                                    <input type="hidden" name="Gallery[@Model.IndexOf(item)].Name" class="gallery-input-item" value="@item.Name" />
+                                    <input type="hidden" name="Gallery[@Model.IndexOf(item)].Order" class="gallery-order-item" value="@item.Order" />
+                                </div>
+                                <div class="delete-wrapper">
+                                    <a class="btn btn-warning delete-gallery-image" style="color:white;">წაშლა</a>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                }
+            </ol>
+        </div>
+    </div>
+</div>
+
+<!-- end::Gallery -->
+
+<style>
+    .sortable {
+        width: 100%;
+        list-style: none;
+    }
+</style>

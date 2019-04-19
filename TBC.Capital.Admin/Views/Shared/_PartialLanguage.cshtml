@@ -1,0 +1,26 @@
+﻿@model List<TBC.Capital.Dal.Models.Language>
+
+
+<div class="m-portlet__head">
+    <div class="m-portlet__head-caption">
+        <div class="m-portlet__head-title">
+            <h3 class="m-portlet__head-text">
+                ინფორმაცია
+            </h3>
+        </div>
+    </div>
+    <div class="m-portlet__head-tools">
+        <ul class="nav nav-tabs m-tabs m-tabs-line   m-tabs-line--right m-tabs-line-danger" role="tablist">
+
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                <li class="nav-item m-tabs__item ">
+                    <a class="nav-link m-tabs__link @if (i == 0) { <text>active</text> }" data-toggle="tab" href="#lang-@item.Code" role="tab">
+                        @item.Name
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

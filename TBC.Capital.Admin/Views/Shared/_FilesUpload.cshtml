@@ -1,0 +1,135 @@
+﻿@model IEnumerable<AttachedFilesVM>
+@{
+    var Languages = ViewBag.Languages as List<TBC.Capital.Dal.Models.Language>;
+}
+<div class="staff-files-container lang-parent">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">ფაილების განყოფილება</h3>
+            </div>
+        </div>
+
+        <div class="m-portlet__head-tools">
+            <ul class="m-portlet__nav">
+                <li class="m-portlet__nav-item">
+                    <div class="btn btn-primary m-btn m-btn--pill m-btn--custom m-btn--icon m-btn--air add-file show-lang">
+                        <span>
+                            <i class="la la-plus-circle"></i>
+                            <span>
+                                ფაილის დამატება
+                            </span>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div style="display:@((Model == null || Model.Count()==0 )?"none":"")" class="m-portlet__head  file-lang-parent lang-container">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    ინფორმაცია
+                </h3>
+            </div>
+        </div>
+        <div class="m-portlet__head-tools">
+            <ul class="nav nav-tabs m-tabs m-tabs-line   m-tabs-line--right m-tabs-line-danger" role="tablist">
+                @for (int i = 0; i < Languages.Count; i++)
+                {
+                    var lang = Languages[i];
+                    <li class="nav-item m-tabs__item ">
+                        <a class="nav-link m-tabs__link lang-pan @if (i == 0) { <text>active</text> }" data-toggle="tab" data-lang="@lang.Code" role="tab">
+                            @lang.Name
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="file-items sortable">
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <div class="form-group row m-form__group file-item">
+                    <div class="m-portlet__body col-md-12">
+                        <div class="tab-content">
+                            <input hidden value="@item.Id" name="AttachedFiles[m].Id" />
+                            <input hidden value="@item.Order" name="AttachedFiles[m].Order" class="order-item" />
+                            @for (int i = 0; i < Languages.Count; i++)
+                            {
+                                var lang = Languages[i];
+                                <div class="tab-pane lang-boxes @lang.Code @if (i == 0) { <text>active</text>}" role="tabpanel">
+                                    <div class="form-group row m-form__group">
+                                        <div class="col-md-5">
+                                            <input hidden value="@lang.Code" name="AttachedFiles[m].Translations[t].LanguageCode" class="AttachedFiles-lang" />
+                                            <input value="@item.Translations[i].Name" name="AttachedFiles[m].Translations[t].Name" class="form-control text-box single-line" placeholder="ფაილის სახელწოდება" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="custom-file" for="AttachedFiles[@i].File">
+                                                <input type="file" class="file-uploader custom-file-input" id="AttachedFiles[@i].File" />
+                                                <input hidden class="" value="@item.Translations[i].File" name="AttachedFiles[m].Translations[t].File" />
+                                                <span class="custom-file-label">
+                                                    @item.Translations[i].File
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 text-center">
+                                            @if (!string.IsNullOrWhiteSpace(item.Translations[i].File))
+                                            {
+                                                <a target="_blank" class="btn btn-primary m-btn m-btn--pill m-btn--custom m-btn--icon m-btn--air" href="@Url.Content(item.Translations[i].File)">
+                                                    ფაილის ნახვა
+                                                </a>
+                                            }
+                                        </div>
+                                        <div class="col-md-1">
+                                            <span class="btn btn-danger m-btn m-btn--icon m-btn--icon-only remove-file-item float-right">
+                                                <i class="la la-remove"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+<div class="form-group row m-form__group staff-file-item file-template file-item hidden">
+    <div class="m-portlet__body col-md-12">
+        <div class="tab-content">
+            <input hidden value="" name="AttachedFiles[m].Order" class="order-item" />
+            @for (int i = 0; i < Languages.Count; i++)
+            {
+                var lang = Languages[i];
+                <div class="tab-pane lang-boxes @lang.Code @if (i == 0) { <text>active</text>}" role="tabpanel">
+                    <div class="form-group row m-form__group">
+                        <div class="col-md-5">
+                            <input hidden value="@lang.Code" name="AttachedFiles[m].Translations[t].LanguageCode" class="AttachedFiles-lang" />
+                            <input value="" name="AttachedFiles[m].Translations[t].Name" class="AttachedFiles-name form-control text-box single-line @(lang.Code == "ka" ? "validate-file-input" : "")" placeholder="ფაილის სახელწოდება" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="custom-file" for="File_@i">
+                                <input type="file" class="file-uploader @(lang.Code == "ka" ? "validate-file-input" : "") custom-file-input" id="File_@i" />
+                                <input hidden class="AttachedFiles-value" value="" name="AttachedFiles[m].Translations[t].File" />
+                                <span class="custom-file-label">
+                                </span>
+                            </label>
+                        </div>
+                        <div class="col-md-1">
+                            <span class="btn btn-danger m-btn m-btn--icon m-btn--icon-only remove-file-item float-right">
+                                <i class="la la-remove"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
